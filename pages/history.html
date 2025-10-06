@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>历史数据 - 磁检测仪器</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/industrial.css">
+</head>
+<body style="padding: 20px;">
+    <div class="card">
+        <div class="card-header">
+            <h2>历史测试记录</h2>
+            <button class="btn btn-primary" onclick="location.href='../index.html'">返回主界面</button>
+        </div>
+        <div class="card-body">
+            <div class="form-group">
+                <label>筛选条件</label>
+                <input type="text" class="form-control" id="search" placeholder="搜索工件编号...">
+            </div>
+            <table class="table table-striped" id="records-table">
+                <thead>
+                    <tr>
+                        <th>测试日期</th>
+                        <th>工件编号</th>
+                        <th>材质</th>
+                        <th>测试类型</th>
+                        <th>缺陷数量</th>
+                        <th>测试结果</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="records-body">
+                    <tr>
+                        <td colspan="7" class="text-center">加载中...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/database.js"></script>
+    <script>
+        async function loadRecords() {
+            await initDatabase();
+            const records = await getTestRecords();
+            const tbody = document.getElementById('records-body');
+            
+            if (records.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center">暂无数据</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = records.map(record => `
+                <tr>
+                    <td>${formatDateTime(record.test_date)}</td>
+                    <td>${record.workpiece_id}</td>
+                    <td>${record.workpiece_material}</td>
+                    <td>${record.test_type}</td>
+                    <td>${record.defect_count}</td>
+                    <td><span class="badge badge-${record.test_result === 'pass' ? 'success' : 'danger'}">${record.test_result}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" onclick="viewRecord('${record.id}')">查看</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteRecord('${record.id}')">删除</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        async function deleteRecord(id) {
+            if (!confirm('确定要删除这条记录吗？')) return;
+            await deleteTestRecord(id);
+            loadRecords();
+            showMessage('删除成功', 'success');
+        }
+        
+        window.addEventListener('DOMContentLoaded', loadRecords);
+    </script>
+</body>
+</html>

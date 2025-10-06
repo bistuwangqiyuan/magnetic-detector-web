@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>磁检测仪器网页版 - DOPPLER</title>
+    
+    <!-- 样式文件 -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/industrial.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <div class="device-container">
+        <!-- 橙色边角装饰 -->
+        <div class="corner-decoration top-left"></div>
+        <div class="corner-decoration top-right"></div>
+        <div class="corner-decoration bottom-left"></div>
+        <div class="corner-decoration bottom-right"></div>
+
+        <!-- 螺丝孔装饰 -->
+        <div class="screw" style="top: 30px; left: 30px;"></div>
+        <div class="screw" style="top: 30px; right: 30px;"></div>
+        <div class="screw" style="bottom: 100px; left: 30px;"></div>
+        <div class="screw" style="bottom: 100px; right: 30px;"></div>
+
+        <!-- 状态栏 -->
+        <div class="status-bar">
+            <div class="indicator-group">
+                <div class="indicator-item">
+                    <div class="led-indicator on"></div>
+                    <span>系统运行</span>
+                </div>
+                <div class="indicator-item">
+                    <div class="led-indicator green"></div>
+                    <span>数据库</span>
+                </div>
+            </div>
+            <div style="color: #FF6B1A; font-weight: bold;">©NOVASCAN</div>
+            <div id="current-time">2025-10-06 18:13:45</div>
+        </div>
+
+        <!-- 左侧控制按钮 -->
+        <div style="position: absolute; left: 30px; top: 150px; display: flex; flex-direction: column; gap: 15px;">
+            <button class="metal-button active side-btn" id="btn-play" style="width: 120px; height: 60px; font-size: 24px;">▶</button>
+            <button class="metal-button side-btn" onclick="location.href='pages/history.html'" style="width: 120px; height: 60px;">历史</button>
+            <button class="metal-button active side-btn" style="width: 120px; height: 60px;">DISP</button>
+            <button class="metal-button active side-btn" style="width: 120px; height: 60px;">主</button>
+            <button class="metal-button active side-btn" style="width: 120px; height: 60px;">GATE</button>
+            <button class="metal-button active side-btn" style="width: 120px; height: 60px;">VPA</button>
+        </div>
+
+        <!-- 右侧控制按钮 -->
+        <div style="position: absolute; right: 30px; top: 200px; display: flex; flex-direction: column; gap: 20px;">
+            <button class="metal-button active side-btn" onclick="location.href='pages/settings.html'" style="width: 120px; height: 60px;">设置</button>
+            <button class="metal-button active side-btn" id="btn-save" style="width: 120px; height: 60px;">SAVE</button>
+            <button class="metal-button active side-btn" onclick="location.href='pages/reports.html'" style="width: 120px; height: 60px;">报告</button>
+        </div>
+
+        <!-- 右下角旋钮 -->
+        <div class="rotary-knob" id="sensitivity-knob" style="position: absolute; right: 80px; bottom: 180px;"></div>
+
+        <!-- 主显示区域 -->
+        <div style="position: absolute; left: 170px; top: 80px; right: 170px; bottom: 120px; background: white; border: 3px solid #333; box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column;">
+            
+            <!-- 顶部信息栏 -->
+            <div style="padding: 10px 20px; background: #f0f0f0; border-bottom: 2px solid #ccc; display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-size: 32px; font-weight: bold; font-style: italic;">D</div>
+                    <div>
+                        <div style="font-weight: bold; font-size: 14px;">实时监测模式</div>
+                        <div style="font-size: 11px; color: #666;">v1.0.0 | B-SCAN</div>
+                    </div>
+                </div>
+                <div class="digital-display" id="defect-counter">缺陷: 0</div>
+            </div>
+
+            <!-- 主显示区 -->
+            <div style="flex: 1; display: flex;">
+                <!-- 左侧菜单 -->
+                <div style="width: 180px; background: #f5f5f5; border-right: 2px solid #ccc; overflow-y: auto; padding: 10px 0;">
+                    <div class="menu-item" data-page="realtime">📡 实时监测</div>
+                    <div class="menu-item" data-page="history">📊 历史数据</div>
+                    <div class="menu-item" data-page="analysis">📈 数据分析</div>
+                    <div class="menu-item" data-page="reports">📄 报告管理</div>
+                    <div class="menu-item" data-page="settings">⚙️ 参数设置</div>
+                    <div class="menu-item" data-page="calibration">🔧 校准管理</div>
+                </div>
+
+                <!-- 波形显示区 -->
+                <div style="flex: 1; background: #0A0A0A; position: relative;">
+                    <!-- 网格背景 -->
+                    <div style="position: absolute; inset: 0; background-image: repeating-linear-gradient(0deg, transparent, transparent 49px, rgba(100, 100, 100, 0.2) 49px, rgba(100, 100, 100, 0.2) 50px), repeating-linear-gradient(90deg, transparent, transparent 49px, rgba(100, 100, 100, 0.2) 49px, rgba(100, 100, 100, 0.2) 50px); background-size: 50px 50px;"></div>
+                    
+                    <!-- Canvas画布 -->
+                    <canvas id="waveform-canvas" style="position: absolute; inset: 30px; width: calc(100% - 60px); height: calc(100% - 60px);"></canvas>
+                    
+                    <!-- 标尺 -->
+                    <div style="position: absolute; top: 5px; left: 40px; color: #FFFF00; font-size: 11px;">数字磁检测 B-SCAN</div>
+                    <div style="position: absolute; bottom: 5px; left: 40px; right: 40px; display: flex; justify-content: space-between; color: #FFFF00; font-size: 9px;">
+                        <span>0.0mm</span>
+                        <span>25.0mm</span>
+                        <span>50.0mm</span>
+                        <span>75.0mm</span>
+                        <span>100.0mm</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 底部控制栏 -->
+            <div style="height: 50px; background: #e8e8e8; border-top: 2px solid #ccc; display: flex; align-items: center; justify-content: space-between; padding: 0 20px;">
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <label style="font-size: 12px;">灵敏度:</label>
+                    <input type="range" id="sensitivity-slider" min="1" max="10" value="7" style="width: 120px;">
+                    <span id="sensitivity-value" style="font-size: 12px; font-weight: bold;">7</span>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <label style="font-size: 12px;">上门限:</label>
+                    <input type="number" id="upper-gate" value="80" min="0" max="100" style="width: 60px; padding: 4px;">
+                    <label style="font-size: 12px;">下门限:</label>
+                    <input type="number" id="lower-gate" value="20" min="0" max="100" style="width: 60px; padding: 4px;">
+                </div>
+                <div style="font-size: 11px; color: #666;">
+                    <span>状态: </span>
+                    <span id="monitor-status" style="color: #00aa00; font-weight: bold;">就绪</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 品牌标识 -->
+        <div class="brand-logo" style="position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);">DOPPLER</div>
+    </div>
+
+    <!-- JavaScript库 -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/database.js"></script>
+    <script src="js/waveform.js"></script>
+    <script src="js/realtime.js"></script>
+
+    <script>
+        // 初始化
+        let monitor = null;
+        let renderer = null;
+        let isMonitoring = false;
+
+        // 页面加载完成后初始化
+        window.addEventListener('DOMContentLoaded', async () => {
+            // 初始化数据库
+            await initDatabase();
+            
+            // 初始化Canvas渲染器
+            const canvas = document.getElementById('waveform-canvas');
+            renderer = new WaveformRenderer(canvas, {
+                waveformColor: '#00FF00',
+                gridSize: 50,
+                showGrid: false
+            });
+
+            // 初始化实时监控
+            monitor = new RealtimeMonitor();
+            
+            // 设置回调
+            monitor.on('dataUpdate', (data) => {
+                // 更新波形显示
+                const upperGate = parseFloat(document.getElementById('upper-gate').value);
+                const lowerGate = parseFloat(document.getElementById('lower-gate').value);
+                
+                renderer.render({
+                    waveform: data,
+                    gates: { upper: upperGate, lower: lowerGate }
+                });
+            });
+
+            monitor.on('defectDetected', (defect) => {
+                // 更新缺陷计数
+                const counter = document.getElementById('defect-counter');
+                const count = parseInt(counter.textContent.split(':')[1]) + 1;
+                counter.textContent = `缺陷: ${count}`;
+                
+                // 显示提示
+                showMessage(`检测到${DEFECT_TYPES[defect.type].name} - ${defect.severity}`, 'warning');
+            });
+
+            // 绑定事件
+            document.getElementById('btn-play').addEventListener('click', toggleMonitoring);
+            document.getElementById('btn-save').addEventListener('click', saveTestData);
+            
+            // 灵敏度控制
+            document.getElementById('sensitivity-slider').addEventListener('input', (e) => {
+                document.getElementById('sensitivity-value').textContent = e.target.value;
+                if (monitor) {
+                    monitor.updateConfig({ sensitivity: parseInt(e.target.value) });
+                }
+            });
+
+            // 旋钮控制
+            const knob = document.getElementById('sensitivity-knob');
+            let knobRotation = 0;
+            knob.addEventListener('click', () => {
+                knobRotation += 36;
+                knob.style.transform = `rotate(${knobRotation}deg)`;
+                const sensitivity = Math.min(10, Math.max(1, Math.floor(knobRotation / 36) % 11));
+                document.getElementById('sensitivity-slider').value = sensitivity;
+                document.getElementById('sensitivity-value').textContent = sensitivity;
+            });
+
+            // 菜单导航
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const page = this.getAttribute('data-page');
+                    if (page && page !== 'realtime') {
+                        window.location.href = `pages/${page}.html`;
+                    }
+                });
+            });
+
+            // 更新时间
+            setInterval(() => {
+                document.getElementById('current-time').textContent = formatDateTime(new Date());
+            }, 1000);
+        });
+
+        // 切换监测状态
+        async function toggleMonitoring() {
+            const btn = document.getElementById('btn-play');
+            const status = document.getElementById('monitor-status');
+            
+            if (!isMonitoring) {
+                // 启动监测
+                await monitor.start({
+                    workpiece_id: 'WP-' + Date.now(),
+                    workpiece_material: 'Q235',
+                    workpiece_spec: 'Φ219×6mm',
+                    test_type: '钢管检测',
+                    operator: 'System'
+                });
+                
+                btn.textContent = '⏸';
+                status.textContent = '监测中';
+                status.style.color = '#FF6B1A';
+                isMonitoring = true;
+                showMessage('实时监测已启动', 'success');
+            } else {
+                // 停止监测
+                await monitor.stop();
+                
+                btn.textContent = '▶';
+                status.textContent = '已停止';
+                status.style.color = '#999';
+                isMonitoring = false;
+                showMessage('实时监测已停止', 'info');
+            }
+        }
+
+        // 保存测试数据
+        async function saveTestData() {
+            if (!monitor.currentRecord) {
+                showMessage('没有可保存的数据', 'warning');
+                return;
+            }
+
+            try {
+                showLoading(true);
+                await monitor.saveData();
+                showMessage('数据保存成功', 'success');
+            } catch (error) {
+                showMessage('数据保存失败: ' + error.message, 'danger');
+            } finally {
+                showLoading(false);
+            }
+        }
+    </script>
+</body>
+</html>
+
