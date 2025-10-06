@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>校准管理 - 磁检测仪器</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/industrial.css">
+</head>
+<body style="padding: 20px;">
+    <div class="card">
+        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>设备校准管理</h2>
+            <button class="btn btn-primary" onclick="location.href='../index.html'">返回主界面</button>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info">
+                <strong>提示：</strong> 定期校准可确保检测结果的准确性和可靠性。建议每年至少进行一次完整校准。
+            </div>
+            
+            <div class="card" style="margin-top: 20px;">
+                <div class="card-header">当前校准状态</div>
+                <div class="card-body">
+                    <table class="table">
+                        <tr>
+                            <td><strong>校准日期</strong></td>
+                            <td id="cal-date">--</td>
+                        </tr>
+                        <tr>
+                            <td><strong>标准试块</strong></td>
+                            <td id="cal-block">--</td>
+                        </tr>
+                        <tr>
+                            <td><strong>有效期至</strong></td>
+                            <td id="cal-valid">--</td>
+                        </tr>
+                        <tr>
+                            <td><strong>校准状态</strong></td>
+                            <td><span class="badge badge-success" id="cal-status">有效</span></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="card" style="margin-top: 20px;">
+                <div class="card-header">校准向导</div>
+                <div class="card-body">
+                    <div style="display: flex; flex-direction: column; gap: 15px;">
+                        <div class="form-group">
+                            <label class="form-label">标准试块类型</label>
+                            <select class="form-control form-select" id="block-type">
+                                <option value="flat_bottom">平底孔标准试块</option>
+                                <option value="slot">槽型标准试块</option>
+                                <option value="step">阶梯标准试块</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">操作员</label>
+                            <input type="text" class="form-control" id="operator" value="System">
+                        </div>
+                        <button class="btn btn-primary btn-lg" onclick="startCalibration()">开始校准</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card" style="margin-top: 20px;">
+                <div class="card-header">校准历史记录</div>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>校准日期</th>
+                                <th>标准试块</th>
+                                <th>操作员</th>
+                                <th>有效期</th>
+                                <th>状态</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cal-history">
+                            <tr><td colspan="5" class="text-center">加载中...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/database.js"></script>
+    <script>
+        async function loadCalibration() {
+            await initDatabase();
+            const cal = await getActiveCalibration();
+            
+            if (cal) {
+                document.getElementById('cal-date').textContent = formatDateTime(cal.calibration_date);
+                document.getElementById('cal-block').textContent = cal.standard_block_type;
+                document.getElementById('cal-valid').textContent = formatDateTime(cal.valid_until);
+                
+                const isValid = new Date(cal.valid_until) > new Date();
+                const statusEl = document.getElementById('cal-status');
+                statusEl.textContent = isValid ? '有效' : '已过期';
+                statusEl.className = `badge badge-${isValid ? 'success' : 'danger'}`;
+            }
+        }
+        
+        function startCalibration() {
+            showMessage('校准向导功能开发中', 'info');
+        }
+        
+        window.addEventListener('DOMContentLoaded', loadCalibration);
+    </script>
+</body>
+</html>

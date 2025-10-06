@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据分析 - 磁检测仪器</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/industrial.css">
+</head>
+<body style="padding: 20px;">
+    <div class="card">
+        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>波形数据分析</h2>
+            <button class="btn btn-primary" onclick="location.href='../index.html'">返回主界面</button>
+        </div>
+        <div class="card-body">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="card">
+                    <div class="card-header">频谱分析</div>
+                    <div class="card-body">
+                        <canvas id="spectrum-canvas" width="400" height="300"></canvas>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">统计分析</div>
+                    <div class="card-body">
+                        <table class="table">
+                            <tr><td>均值</td><td id="stat-mean">--</td></tr>
+                            <tr><td>标准差</td><td id="stat-std">--</td></tr>
+                            <tr><td>最大值</td><td id="stat-max">--</td></tr>
+                            <tr><td>最小值</td><td id="stat-min">--</td></tr>
+                            <tr><td>峰峰值</td><td id="stat-pp">--</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../js/config.js"></script>
+</body>
+</html>

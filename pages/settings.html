@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>参数设置 - 磁检测仪器</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/industrial.css">
+</head>
+<body style="padding: 20px;">
+    <div class="card">
+        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>系统参数设置</h2>
+            <button class="btn btn-primary" onclick="location.href='../index.html'">返回主界面</button>
+        </div>
+        <div class="card-body">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                <div class="card">
+                    <div class="card-header">采集参数</div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label class="form-label">采样频率 (Hz)</label>
+                            <input type="number" class="form-control" id="sampling-rate" value="2000" min="10" max="10000">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">采样点数</label>
+                            <input type="number" class="form-control" id="sampling-points" value="5000" min="1000" max="10000">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">灵敏度 (1-10)</label>
+                            <input type="range" class="form-control" id="sensitivity" value="7" min="1" max="10">
+                            <span id="sensitivity-value">7</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">检测参数</div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label class="form-label">上门限 (%)</label>
+                            <input type="number" class="form-control" id="upper-gate" value="80" min="0" max="100">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">下门限 (%)</label>
+                            <input type="number" class="form-control" id="lower-gate" value="20" min="0" max="100">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">显示模式</label>
+                            <select class="form-control form-select" id="scan-type">
+                                <option value="A-SCAN">A-SCAN</option>
+                                <option value="B-SCAN" selected>B-SCAN</option>
+                                <option value="C-SCAN">C-SCAN</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card" style="margin-top: 20px;">
+                <div class="card-header">测试模板</div>
+                <div class="card-body">
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-secondary">钢管标准检测</button>
+                        <button class="btn btn-secondary">钢板焊缝检测</button>
+                        <button class="btn btn-secondary">高灵敏度检测</button>
+                        <button class="btn btn-primary">保存为模板</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px; text-align: right;">
+                <button class="btn btn-primary" onclick="saveSettings()">保存设置</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script>
+        document.getElementById('sensitivity').addEventListener('input', (e) => {
+            document.getElementById('sensitivity-value').textContent = e.target.value;
+        });
+        
+        function saveSettings() {
+            const settings = {
+                samplingRate: document.getElementById('sampling-rate').value,
+                samplingPoints: document.getElementById('sampling-points').value,
+                sensitivity: document.getElementById('sensitivity').value,
+                upperGate: document.getElementById('upper-gate').value,
+                lowerGate: document.getElementById('lower-gate').value,
+                scanType: document.getElementById('scan-type').value
+            };
+            localStorage.setItem('magneticTestSettings', JSON.stringify(settings));
+            showMessage('设置保存成功', 'success');
+        }
+    </script>
+</body>
+</html>

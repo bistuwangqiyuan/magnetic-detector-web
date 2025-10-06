@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>报告管理 - 磁检测仪器</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/industrial.css">
+</head>
+<body style="padding: 20px;">
+    <div class="card">
+        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>检测报告管理</h2>
+            <div>
+                <button class="btn btn-primary" onclick="generateReport()">生成报告</button>
+                <button class="btn btn-secondary" onclick="location.href='../index.html'">返回主界面</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped" id="reports-table">
+                <thead>
+                    <tr>
+                        <th>报告标题</th>
+                        <th>测试记录</th>
+                        <th>生成日期</th>
+                        <th>生成者</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="reports-body">
+                    <tr><td colspan="5" class="text-center">加载中...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/database.js"></script>
+    <script>
+        async function loadReports() {
+            await initDatabase();
+            const reports = await getReports();
+            const tbody = document.getElementById('reports-body');
+            
+            if (reports.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center">暂无报告</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = reports.map(report => `
+                <tr>
+                    <td>${report.report_title}</td>
+                    <td>${report.test_records?.workpiece_id || '--'}</td>
+                    <td>${formatDateTime(report.generated_date)}</td>
+                    <td>${report.generated_by}</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" onclick="downloadReport('${report.id}')">下载</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function generateReport() {
+            showMessage('报告生成功能开发中', 'info');
+        }
+        
+        window.addEventListener('DOMContentLoaded', loadReports);
+    </script>
+</body>
+</html>
