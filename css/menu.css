@@ -1,0 +1,37 @@
+/**
+ * 磁检测仪器网页版 - 菜单样式
+ * 左侧菜单导航样式
+ */
+
+/* ==================== 菜单项样式 ==================== */
+.menu-item {
+    padding: 12px 15px;
+    margin: 5px 10px;
+    background: white;
+    border: 1px solid #ddd;
+    border-left: 3px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 13px;
+    user-select: none;
+}
+
+.menu-item:hover {
+    background: #f8f8f8;
+    border-left-color: var(--primary-orange);
+    transform: translateX(3px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.menu-item.active {
+    background: linear-gradient(90deg, #fff3e6 0%, #ffffff 100%);
+    border-left-color: var(--primary-orange);
+    font-weight: bold;
+    color: var(--primary-orange);
+}
+
+.menu-item:active {
+    transform: translateX(1px);
+}
+
