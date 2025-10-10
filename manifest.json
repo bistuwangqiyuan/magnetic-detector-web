@@ -1,0 +1,84 @@
+{
+  "name": "DOPPLER磁检测仪器网页版",
+  "short_name": "DOPPLER磁检测",
+  "description": "高端工业级磁检测仪器网页版软件，专业用于钢管、钢板等铁磁性材料的无损检测",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#2A2A2A",
+  "theme_color": "#FF6B1A",
+  "orientation": "landscape",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon-16x16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["industrial", "productivity", "utilities"],
+  "lang": "zh-CN",
+  "dir": "ltr",
+  "scope": "/",
+  "screenshots": [
+    {
+      "src": "/image/磁检测界面.jpg",
+      "sizes": "1920x1080",
+      "type": "image/jpeg",
+      "label": "DOPPLER磁检测仪器主界面"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "实时监测",
+      "short_name": "监测",
+      "description": "启动实时磁场监测",
+      "url": "/",
+      "icons": [{ "src": "/favicon-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "历史数据",
+      "short_name": "历史",
+      "description": "查看历史测试记录",
+      "url": "/pages/history.html",
+      "icons": [{ "src": "/favicon-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "数据分析",
+      "short_name": "分析",
+      "description": "数据统计与分析",
+      "url": "/pages/analysis.html",
+      "icons": [{ "src": "/favicon-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "用户手册",
+      "short_name": "手册",
+      "description": "查看操作手册",
+      "url": "/pages/user-guide.html",
+      "icons": [{ "src": "/favicon-96x96.png", "sizes": "96x96" }]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}
+
